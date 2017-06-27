@@ -630,6 +630,6 @@ func angleBetweenPoints(first: CGPoint, second: CGPoint) -> CGFloat {
     let width = second.x - first.x;
     let rads = atan(height/width);
     
-    let degree = (180.0 * rads / CGFloat.pi);
+    let degree = 90 - (180.0 * rads / CGFloat.pi);
     return degree;
 }

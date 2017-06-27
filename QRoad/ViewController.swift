@@ -169,7 +169,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
             self.updateFocusSquare();
         }
         // 获取扫描到的图片
-        //self.scanInfo();
+        self.scanInfo();
     }
     
     // 添加节点时候调用（当开启平地捕捉模式之后，如果捕捉到平地，ARKit会自动添加一个平地节点）
@@ -520,7 +520,44 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
         let element = SCNGeometryElement(indices: indices, primitiveType: .line)
         return SCNGeometry(sources: [source], elements: [element])
     }
-    // 二维码扫描管理
+    
+    // 图文解析
+    func scanInfo() {
+        let detector = CIDetector(ofType: CIDetectorTypeQRCode, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh]);
+        if let cvPixelBuffer = (sceneView.session.currentFrame?.capturedImage) {
+            let image = CIImage(cvPixelBuffer: cvPixelBuffer);
+            let features = detector?.features(in: image, options: [CIDetectorImageOrientation:8]);
+            for feature in features! {
+                let tmpFeature = feature as! CIQRCodeFeature;
+                print("feature", tmpFeature.messageString, tmpFeature.bounds, tmpFeature.bottomLeft, tmpFeature.bottomRight, tmpFeature.topLeft, tmpFeature.topRight);
+                
+                let degree = angleBetweenPoints(first: tmpFeature.topRight, second: tmpFeature.topLeft);
+                print("degree",degree);
+                
+                let planeBox = SCNBox.init(width: CGFloat(0.02), height: CGFloat(0.06), length: CGFloat(0.02), chamferRadius: CGFloat(0));
+                planeBox.firstMaterial?.diffuse.contents = UIColor.blue;
+                // add texture
+                let material = SCNMaterial()
+                material.diffuse.contents = UIImage(named: "galaxy")
+            }
+        }
+    }
+    
+    
+    // 获取用户方向
+    func getUserVector() -> (SCNVector3, SCNVector3) { // (direction, position)
+        if let frame = self.sceneView.session.currentFrame {
+            let mat = SCNMatrix4FromMat4(frame.camera.transform) // 4x4 transform matrix describing camera in world space
+            let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33) // orientation of camera in world space
+            let pos = SCNVector3(mat.m41, mat.m42, mat.m43) // location of camera in world space
+            
+            return (dir, pos)
+        }
+        return (SCNVector3(0, 0, -1), SCNVector3(0, 0, -0.2))
+    }
+    
+    
+    // MARK: delete  二维码扫描管理
     func setupScanner() {
         let avcaptureSession = AVCaptureSession();
         let avDevice = AVCaptureDevice.default(for: AVMediaType.video);
@@ -542,33 +579,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
         for metaData in metadataObjects {
             print("metaData", metaData);
         }
-    }
-    // 图文解析
-    func scanInfo() {
-        let detector = CIDetector(ofType: CIDetectorTypeQRCode, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh]);
-        if let cvPixelBuffer = (sceneView.session.currentFrame?.capturedImage) {
-            let image = CIImage(cvPixelBuffer: cvPixelBuffer);
-            let features = detector?.features(in: image);
-            for feature in features! {
-                let tmpFeature = feature as! CIQRCodeFeature;
-                print("feature", tmpFeature.messageString, tmpFeature.bounds, tmpFeature.bottomLeft, tmpFeature.bottomRight, tmpFeature.topLeft, tmpFeature.topRight);
-                
-                let degree = angleBetweenPoints(first: tmpFeature.topRight, second: tmpFeature.topLeft);
-                print("degree",degree);
-            }
-        }
-    }
-    
-    // 获取用户方向
-    func getUserVector() -> (SCNVector3, SCNVector3) { // (direction, position)
-        if let frame = self.sceneView.session.currentFrame {
-            let mat = SCNMatrix4FromMat4(frame.camera.transform) // 4x4 transform matrix describing camera in world space
-            let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33) // orientation of camera in world space
-            let pos = SCNVector3(mat.m41, mat.m42, mat.m43) // location of camera in world space
-            
-            return (dir, pos)
-        }
-        return (SCNVector3(0, 0, -1), SCNVector3(0, 0, -0.2))
     }
     
     
