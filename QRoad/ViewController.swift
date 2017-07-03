@@ -529,7 +529,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
             let features = detector?.features(in: image, options: [CIDetectorImageOrientation:8]);
             for feature in features! {
                 let tmpFeature = feature as! CIQRCodeFeature;
-                print("feature", tmpFeature.messageString, tmpFeature.bounds, tmpFeature.bottomLeft, tmpFeature.bottomRight, tmpFeature.topLeft, tmpFeature.topRight);
                 
                 let degree = angleBetweenPoints(first: tmpFeature.topRight, second: tmpFeature.topLeft);
                 print("degree",degree);

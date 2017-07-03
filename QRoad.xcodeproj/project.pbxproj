@@ -17,7 +17,6 @@
 		350B0CF41F0021E600583B5A /* FocusSquare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350B0CF31F0021E600583B5A /* FocusSquare.swift */; };
 		350B0CF61F0023BA00583B5A /* PlaneDebugVisualization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350B0CF51F0023BA00583B5A /* PlaneDebugVisualization.swift */; };
 		350B0CF81F00BC1000583B5A /* Plane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350B0CF71F00BC1000583B5A /* Plane.swift */; };
-		350B0CFD1F010BF500583B5A /* MTBBarcodeScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 350B0CFC1F010BF500583B5A /* MTBBarcodeScanner.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,9 +32,16 @@
 		350B0CF31F0021E600583B5A /* FocusSquare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusSquare.swift; sourceTree = "<group>"; };
 		350B0CF51F0023BA00583B5A /* PlaneDebugVisualization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaneDebugVisualization.swift; sourceTree = "<group>"; };
 		350B0CF71F00BC1000583B5A /* Plane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plane.swift; sourceTree = "<group>"; };
-		350B0CFA1F010BF400583B5A /* QRoad-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "QRoad-Bridging-Header.h"; sourceTree = "<group>"; };
-		350B0CFB1F010BF500583B5A /* MTBBarcodeScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTBBarcodeScanner.h; path = "../../../../Downloads/MTBBarcodeScanner-develop/Classes/ios/Scanners/MTBBarcodeScanner.h"; sourceTree = "<group>"; };
-		350B0CFC1F010BF500583B5A /* MTBBarcodeScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTBBarcodeScanner.m; path = "../../../../Downloads/MTBBarcodeScanner-develop/Classes/ios/Scanners/MTBBarcodeScanner.m"; sourceTree = "<group>"; };
+		3583C7061F0A8E00000A95AA /* QARAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QARAudio.swift; sourceTree = "<group>"; };
+		3583C7071F0A8E00000A95AA /* QARImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QARImage.swift; sourceTree = "<group>"; };
+		3583C7081F0A8E00000A95AA /* QARLight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QARLight.swift; sourceTree = "<group>"; };
+		3583C7091F0A8E00000A95AA /* QARMateril.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QARMateril.swift; sourceTree = "<group>"; };
+		3583C70A1F0A8E00000A95AA /* QARShape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QARShape.swift; sourceTree = "<group>"; };
+		3583C70B1F0A8E00000A95AA /* QARText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QARText.swift; sourceTree = "<group>"; };
+		3583C70C1F0A8E00000A95AA /* QARVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QARVideo.swift; sourceTree = "<group>"; };
+		3583C70E1F0A8E73000A95AA /* Coin.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Coin.mp3; sourceTree = "<group>"; };
+		3583C7101F0A8E73000A95AA /* Karen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Karen.swift; sourceTree = "<group>"; };
+		3583C7111F0A8E73000A95AA /* VirtualObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualObject.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +74,9 @@
 		350B0CDB1EFFA93B00583B5A /* QRoad */ = {
 			isa = PBXGroup;
 			children = (
-				350B0CF91F010BEC00583B5A /* QScanners */,
+				3583C70F1F0A8E73000A95AA /* Virtual Objects */,
+				3583C70D1F0A8E73000A95AA /* video */,
+				3583C7051F0A8E00000A95AA /* Common */,
 				350B0CF01EFFAB4D00583B5A /* QRoadUtil */,
 				350B0CDC1EFFA93B00583B5A /* AppDelegate.swift */,
 				350B0CDE1EFFA93B00583B5A /* art.scnassets */,
@@ -92,14 +100,35 @@
 			path = QRoadUtil;
 			sourceTree = "<group>";
 		};
-		350B0CF91F010BEC00583B5A /* QScanners */ = {
+		3583C7051F0A8E00000A95AA /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				350B0CFB1F010BF500583B5A /* MTBBarcodeScanner.h */,
-				350B0CFC1F010BF500583B5A /* MTBBarcodeScanner.m */,
-				350B0CFA1F010BF400583B5A /* QRoad-Bridging-Header.h */,
+				3583C7061F0A8E00000A95AA /* QARAudio.swift */,
+				3583C7071F0A8E00000A95AA /* QARImage.swift */,
+				3583C7081F0A8E00000A95AA /* QARLight.swift */,
+				3583C7091F0A8E00000A95AA /* QARMateril.swift */,
+				3583C70A1F0A8E00000A95AA /* QARShape.swift */,
+				3583C70B1F0A8E00000A95AA /* QARText.swift */,
+				3583C70C1F0A8E00000A95AA /* QARVideo.swift */,
 			);
-			path = QScanners;
+			path = Common;
+			sourceTree = "<group>";
+		};
+		3583C70D1F0A8E73000A95AA /* video */ = {
+			isa = PBXGroup;
+			children = (
+				3583C70E1F0A8E73000A95AA /* Coin.mp3 */,
+			);
+			path = video;
+			sourceTree = "<group>";
+		};
+		3583C70F1F0A8E73000A95AA /* Virtual Objects */ = {
+			isa = PBXGroup;
+			children = (
+				3583C7101F0A8E73000A95AA /* Karen.swift */,
+				3583C7111F0A8E73000A95AA /* VirtualObject.swift */,
+			);
+			path = "Virtual Objects";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -178,7 +207,6 @@
 				350B0CF61F0023BA00583B5A /* PlaneDebugVisualization.swift in Sources */,
 				350B0CF21F00024400583B5A /* Utilities.swift in Sources */,
 				350B0CF41F0021E600583B5A /* FocusSquare.swift in Sources */,
-				350B0CFD1F010BF500583B5A /* MTBBarcodeScanner.m in Sources */,
 				350B0CE11EFFA93B00583B5A /* ViewController.swift in Sources */,
 				350B0CF81F00BC1000583B5A /* Plane.swift in Sources */,
 				350B0CDD1EFFA93B00583B5A /* AppDelegate.swift in Sources */,
@@ -320,7 +348,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.qunar.QRoad;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "QRoad/QScanners/QRoad-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -337,7 +365,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.qunar.QRoad;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "QRoad/QScanners/QRoad-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
