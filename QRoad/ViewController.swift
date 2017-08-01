@@ -25,10 +25,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
         super.viewDidLoad()
         
         // Set the view's delegate
-        self.setupScence();
-        self.setupFocusSquare();
-        self.setupPoint();
-        self.setupScanner();
+        self.setupScence()
+        self.setupFocusSquare()
+        self.setupPoint()
     }
     
     let session = ARSession()
@@ -37,20 +36,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if ARWorldTrackingSessionConfiguration.isSupported { // checks if user's device supports the more precise ARWorldTrackingSessionConfiguration
+        if ARWorldTrackingSessionConfiguration.isSupported {
+            // checks if user's device supports the more precise ARWorldTrackingSessionConfiguration
             // Create a session configuration
             let configuration = ARWorldTrackingSessionConfiguration()
             configuration.planeDetection = .horizontal
-            configuration.isLightEstimationEnabled = true;
-            sessionConfig = configuration;
+            configuration.isLightEstimationEnabled = true
+            sessionConfig = configuration
             // Run the view's session
             sceneView.session.run(configuration)
         } else {
             // slightly less immersive AR experience due to lower end processor
             let configuration = ARSessionConfiguration()
-            sessionConfig = configuration;
+            sessionConfig = configuration
         }
-        //sessionConfig.worldAlignment = .gravityAndHeading;
+        sessionConfig.worldAlignment = .gravityAndHeading
         // Run the view's session
         session.run(sessionConfig)
     }
@@ -80,16 +80,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
     
     var screenCenter: CGPoint?
     func setupScence() {
-        sceneView.delegate = self;
-        sceneView.session = session;
-        sceneView.antialiasingMode = .multisampling4X;
-        sceneView.automaticallyUpdatesLighting = false;
+        sceneView.delegate = self
+        sceneView.session = session
+        sceneView.antialiasingMode = .multisampling4X
+        sceneView.automaticallyUpdatesLighting = false
         
-        sceneView.preferredFramesPerSecond = 60;
-        sceneView.contentScaleFactor = 1;
-        sceneView.showsStatistics = true;
+        sceneView.preferredFramesPerSecond = 60
+        sceneView.contentScaleFactor = 1
+        sceneView.showsStatistics = true
         
-        sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin,ARSCNDebugOptions.showFeaturePoints];
+        sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin,ARSCNDebugOptions.showFeaturePoints]
         
         DispatchQueue.main.async {
             self.screenCenter = self.sceneView.bounds.mid
@@ -137,83 +137,77 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
     
     func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
         // 划线
-//        guard let pointOfView = sceneView.pointOfView else { return }
-//        guard let currentFrame = sceneView.session.currentFrame else { return }
-//
-//        let mat = SCNMatrix4FromMat4(currentFrame.camera.transform);
-//        let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33);
-//        let currentPosition = pointOfView.position+(dir*0.1);
-//        if let previousPoint = previousPoint {
-//            let line = lineFrom(vector: previousPoint, toVector: currentPosition)
-//            let lineNode = SCNNode(geometry: line)
-//            lineNode.geometry?.firstMaterial?.diffuse.contents = lineColor
-//            sceneView.scene.rootNode.addChildNode(lineNode)
-//        }
-//        previousPoint = currentPosition;
-//        glLineWidth(20);
+        /**
+        guard let pointOfView = sceneView.pointOfView else { return }
+        guard let currentFrame = sceneView.session.currentFrame else { return }
+
+        let mat = SCNMatrix4FromMat4(currentFrame.camera.transform)
+        let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33)
+        let currentPosition = pointOfView.position+(dir*0.1)
+        if let previousPoint = previousPoint {
+            let line = lineFrom(vector: previousPoint, toVector: currentPosition)
+            let lineNode = SCNNode(geometry: line)
+            lineNode.geometry?.firstMaterial?.diffuse.contents = lineColor
+            sceneView.scene.rootNode.addChildNode(lineNode)
+        }
+        previousPoint = currentPosition
+        glLineWidth(20)
+        **/
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        // retrieve cloud
-        //guard let cloud = session.currentFrame?.rawFeaturePoints else {
-        //    return
-        //}
-        //print("Features: \(cloud.count)".uppercased());
-        
         //let currentPlaneArray = sceneView.hitTest(CGPoint.init(x: 180, y: 325), types: .existingPlaneUsingExtent)
         //print("currentPlaneArray", currentPlaneArray)
         DispatchQueue.main.async {
-            self.updateFocusSquare();
+            self.updateFocusSquare()
         }
         // 获取扫描到的图片
-        self.scanInfo();
+        self.scanInfo()
     }
     
     // 添加节点时候调用（当开启平地捕捉模式之后，如果捕捉到平地，ARKit会自动添加一个平地节点）
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         DispatchQueue.main.async {
             if let planeAnchor = anchor as? ARPlaneAnchor {
-                self.tmpPlanceNode?.removeFromParentNode();
-                NSLog("====%@", anchor);
-                let planeBox = SCNBox.init(width: CGFloat(planeAnchor.extent.x*0.2), height: CGFloat(0.06), length: CGFloat(planeAnchor.extent.x*0.2), chamferRadius: CGFloat(0));
-                planeBox.firstMaterial?.diffuse.contents = UIColor.blue;
+                self.tmpPlanceNode?.removeFromParentNode()
+                NSLog("====%@", anchor)
+                let planeBox = SCNBox.init(width: CGFloat(planeAnchor.extent.x*0.2), height: CGFloat(0.06), length: CGFloat(planeAnchor.extent.x*0.2), chamferRadius: CGFloat(0))
+                planeBox.firstMaterial?.diffuse.contents = UIColor.blue
                 // add texture
                 let material = SCNMaterial()
                 material.diffuse.contents = UIImage(named: "galaxy")
-                
-                let planeNode = SCNNode(geometry: planeBox);
-                planeNode.geometry?.materials = [material,material,material,material,material,material];
-                planeNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z);
-                self.tmpPlanceNode = planeNode;
-                node.addChildNode(planeNode);
+                let planeNode = SCNNode(geometry: planeBox)
+                planeNode.geometry?.materials = [material,material,material,material,material,material]
+                planeNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
+                self.tmpPlanceNode = planeNode
+                node.addChildNode(planeNode)
                 
                 self.addPlane(node: node, anchor: planeAnchor)
                 /*
                 let scene = SCNScene(named: "art.scnassets/ship.scn")!
-                let shipNode = scene.rootNode.childNodes[0];
-                shipNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z);
-                node.addChildNode(shipNode);
+                let shipNode = scene.rootNode.childNodes[0]
+                shipNode.position = SCNVector3Make(planeAnchor.center.x, 0, planeAnchor.center.z)
+                node.addChildNode(shipNode)
                 */
-                
             }
         }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, willUpdate node: SCNNode, for anchor: ARAnchor) {
-        NSLog("刷新中");
+        NSLog("刷新中")
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        NSLog("节点更新");
+        NSLog("节点更新")
         DispatchQueue.main.async {
-            if let planeAnchor = anchor as? ARPlaneAnchor {
-                self.updatePlane(anchor: planeAnchor)
-            }
+            //            if let planeAnchor = anchor as? ARPlaneAnchor {
+            //                self.updatePlane(anchor: planeAnchor)
+            //            }
         }
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didRemove node: SCNNode, for anchor: ARAnchor) {
-        NSLog("节点移除");
+        NSLog("节点移除")
         DispatchQueue.main.async {
             if let planeAnchor = anchor as? ARPlaneAnchor {
                 self.removePlane(anchor: planeAnchor)
@@ -225,22 +219,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
     // MARK: - ARSessionDelegate
     // 会话位置更新（监听相机的移动），此代理方法会调用非常频繁，只要相机移动就会调用，如果相机移动过快，会有一定的误差，具体的需要强大的算法去优化
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        NSLog("相机移动");
-        DispatchQueue.main.async {
-            //self.planeNode.position = SCNVector3Make(frame.camera.transform.columns.3.x,frame.camera.transform.columns.3.y,frame.camera.transform.columns.3.z);
-        }
+        NSLog("相机移动")
+        //        DispatchQueue.main.async {
+        //            self.planeNode.position = SCNVector3Make(frame.camera.transform.columns.3.x,frame.camera.transform.columns.3.y,frame.camera.transform.columns.3.z)
+        //        }
     }
     
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
-        NSLog("添加锚点");
+        NSLog("添加锚点")
     }
     
     func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {
-        NSLog("刷新锚点");
+        NSLog("刷新锚点")
     }
     
     func session(_ session: ARSession, didRemove anchors: [ARAnchor]) {
-        NSLog("移除锚点");
+        NSLog("移除锚点")
     }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
@@ -257,86 +251,60 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        NSLog("touch began");
+        NSLog("touch began")
         DispatchQueue.main.async {
-            self.startNode?.removeFromParentNode();
+            self.startNode?.removeFromParentNode()
             guard let screenCenter = self.screenCenter else { return }
             
             let (worldPos, _, _) = self.worldPositionFromScreenPosition(screenCenter, objectPos: self.focusSquare?.position)
             if let worldPos = worldPos {
-                print("worldPos begin", worldPos);
+                print("worldPos begin", worldPos)
                 
                 let scene = SCNScene(named: "art.scnassets/ship.scn")!
-                let shipNode = scene.rootNode.childNodes[0];
-                self.startNode = shipNode;
-                shipNode.scale = SCNVector3Make(0.02, 0.02, 0.02);
-                shipNode.position = worldPos;
+                let shipNode = scene.rootNode.childNodes[0]
+                self.startNode = shipNode
+                shipNode.scale = SCNVector3Make(0.02, 0.02, 0.02)
+                shipNode.position = worldPos
                 for node in shipNode.childNodes {
-                    node.scale = SCNVector3Make(0.02, 0.02, 0.02);
-                    shipNode.position = worldPos;
+                    node.scale = SCNVector3Make(0.02, 0.02, 0.02)
+                    shipNode.position = worldPos
                 }
-                self.sceneView.scene.rootNode.addChildNode(shipNode);
+                self.sceneView.scene.rootNode.addChildNode(shipNode)
             }
         }
-        // 添加节点
-//        planeNode?.removeFromParentNode();
-//        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-//        let shipNode = scene.rootNode.childNodes[0];
-//        planeNode = shipNode;
-//        shipNode.scale = SCNVector3Make(0.5, 0.5, 0.5);
-//        //shipNode.position = SCNVector3Make(0, -15, -15);
-//        for node in shipNode.childNodes {
-//            node.scale = SCNVector3Make(0.5, 0.5, 0.5);
-//            //node.position = SCNVector3Make(0, -15, -15);
-//        }
-//        sceneView.scene.rootNode.addChildNode(shipNode);
-        // 旋转
-//        planeNode.position = SCNVector3Make(0, 0, -20);
-//        let cameraNode = SCNNode.init();
-//        cameraNode.position = sceneView.scene.rootNode.position;
-//        sceneView.scene.rootNode.addChildNode(cameraNode);
-//
-//        cameraNode.addChildNode(planeNode);
-//
-//        let rotationAnimation = CABasicAnimation(keyPath: "rotation");
-//        rotationAnimation.duration = 30;
-//        rotationAnimation.toValue = NSValue.init(scnVector4: SCNVector4(0,1,0,Double.pi*2));
-//        rotationAnimation.repeatCount = .greatestFiniteMagnitude;
-//        cameraNode.addAnimation(rotationAnimation, forKey: "rotation");
-        
-        NSLog("current Frame = %@", session.currentFrame!);
-        // let anchor = sceneView.anchor(for: shipNode);
+
+        NSLog("current Frame = %@", session.currentFrame!)
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        NSLog("touch and  move");
+        NSLog("touch and  move")
         DispatchQueue.main.async {
-            self.currentLineNode?.removeFromParentNode();
+            self.currentLineNode?.removeFromParentNode()
             guard let screenCenter = self.screenCenter else { return }
             guard let currentFrame = self.sceneView.session.currentFrame else { return }
             
-            let mat = SCNMatrix4(currentFrame.camera.transform);
-            let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33);
+            let mat = SCNMatrix4(currentFrame.camera.transform)
+            let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33)
             
             let (currentPosition, _ , _) = self.worldPositionFromScreenPosition(screenCenter, objectPos: self.focusSquare?.position)
-            let previousPoint = self.startNode?.position;
+            let previousPoint = self.startNode?.position
             
             let line = self.lineFrom(vector: previousPoint!, toVector: (currentPosition!+dir*0.1))
             let lineNode = SCNNode(geometry: line)
-            self.currentLineNode = lineNode;
+            self.currentLineNode = lineNode
             lineNode.geometry?.firstMaterial?.diffuse.contents = self.lineColor
             self.sceneView.scene.rootNode.addChildNode(lineNode)
-            glLineWidth(50);
+            glLineWidth(50)
         }
         
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        NSLog("touch end");
+        NSLog("touch end")
         DispatchQueue.main.async {
             if let camera = self.sceneView.session.currentFrame?.camera  {
-                var translation = matrix_identity_float4x4;
-                translation.columns.3.z = -0.2;
+                var translation = matrix_identity_float4x4
+                translation.columns.3.z = -0.2
                 
                 // 在当前的摄像头的位置添加一个
                 let transform = matrix_multiply(camera.transform, translation)
@@ -347,43 +315,43 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
                 node.position = position
                 self.sceneView.scene.rootNode.addChildNode(node)
                 
-                let lightNode = QARLight.init(type: .spot, targets: node)
+                let lightNode = QARLight.init(type: .spot, targets: node, color: nil, position: nil)
                 self.sceneView.scene.rootNode.addChildNode(lightNode)
             }
             
-//            self.endNode?.removeFromParentNode();
-//            guard let screenCenter = self.screenCenter else { return }
-//
-//            let (worldPos, _, _) = self.worldPositionFromScreenPosition(screenCenter, objectPos: self.focusSquare?.position)
-//            let previousPoint = self.startNode?.position;
-//            let length = (worldPos! - previousPoint!).length();
-//
-//            print("lenght", length);
-//            if let worldPos = worldPos {
-//                print("worldPos end", worldPos);
-//                guard let currentFrame = self.sceneView.session.currentFrame else { return }
-//                let mat = SCNMatrix4FromMat4(currentFrame.camera.transform);
-//                let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33);
-//                self.currentLineNode?.removeFromParentNode();
-//
-//                let line = self.lineFrom(vector: previousPoint!, toVector: (worldPos+dir*0.1))
-//                let lineNode = SCNNode(geometry: line)
-//                self.currentLineNode = lineNode;
-//                lineNode.geometry?.firstMaterial?.diffuse.contents = self.lineColor
-//                self.sceneView.scene.rootNode.addChildNode(lineNode)
-//                glLineWidth(50);
+            self.endNode?.removeFromParentNode()
+            guard let screenCenter = self.screenCenter else { return }
+
+            let (worldPos, _, _) = self.worldPositionFromScreenPosition(screenCenter, objectPos: self.focusSquare?.position)
+            guard let previousPoint = self.startNode?.position else { return }
+            let length = (worldPos! - previousPoint).length()
+
+            print("lenght", length)
+            if let worldPos = worldPos {
+                print("worldPos end", worldPos)
+                guard let currentFrame = self.sceneView.session.currentFrame else { return }
+                let mat = SCNMatrix4(currentFrame.camera.transform)
+                let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33)
+                self.currentLineNode?.removeFromParentNode()
+
+                let line = self.lineFrom(vector: previousPoint, toVector: (worldPos+dir*0.1))
+                let lineNode = SCNNode(geometry: line)
+                self.currentLineNode = lineNode
+                lineNode.geometry?.firstMaterial?.diffuse.contents = self.lineColor
+                self.sceneView.scene.rootNode.addChildNode(lineNode)
+                glLineWidth(50)
                 
-//                let scene = SCNScene(named: "art.scnassets/ship.scn")!
-//                let shipNode = scene.rootNode.childNodes[0];
-//                self.endNode = shipNode;
-//                shipNode.scale = SCNVector3Make(0.02, 0.02, 0.02);
-//                shipNode.position = worldPos;
-//                for node in shipNode.childNodes {
-//                    node.scale = SCNVector3Make(0.02, 0.02, 0.02);
-//                    shipNode.position = worldPos;
-//                }
-//                self.sceneView.scene.rootNode.addChildNode(shipNode);
-//            }
+                let scene = SCNScene(named: "art.scnassets/ship.scn")!
+                let shipNode = scene.rootNode.childNodes[0]
+                self.endNode = shipNode
+                shipNode.scale = SCNVector3Make(0.02, 0.02, 0.02)
+                shipNode.position = worldPos
+                for node in shipNode.childNodes {
+                    node.scale = SCNVector3Make(0.02, 0.02, 0.02)
+                    shipNode.position = worldPos
+                }
+                self.sceneView.scene.rootNode.addChildNode(shipNode)
+            }
         }
         
         
@@ -397,7 +365,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
         
         let pos = SCNVector3.positionFromTransform(anchor.transform)
         NSLog("NEW SURFACE DETECTED AT \(pos.friendlyString())")
-        
         let plane = Plane(anchor, true)
         
         planes[anchor] = plane
@@ -521,10 +488,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
     }
     
     func setupPoint() {
-        let planeBox = SCNPlane.init(width: CGFloat(0.2), height: CGFloat(0));
-        planeBox.firstMaterial?.diffuse.contents = UIColor.yellow;
-        let planeNode = SCNNode(geometry: planeBox);
-        sceneView.scene.rootNode.addChildNode(planeNode);
+        let planeBox = SCNPlane.init(width: CGFloat(0.2), height: CGFloat(0))
+        planeBox.firstMaterial?.diffuse.contents = UIColor.yellow
+        let planeNode = SCNNode(geometry: planeBox)
+        sceneView.scene.rootNode.addChildNode(planeNode)
     }
     
     func lineFrom(vector vector1: SCNVector3, toVector vector2: SCNVector3) -> SCNGeometry {
@@ -536,21 +503,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
     
     // 图文解析
     func scanInfo() {
-        let detector = CIDetector(ofType: CIDetectorTypeQRCode, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh]);
+        let detector = CIDetector(ofType: CIDetectorTypeQRCode, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh])
         if let cvPixelBuffer = (sceneView.session.currentFrame?.capturedImage) {
-            let image = CIImage(cvPixelBuffer: cvPixelBuffer);
-            let features = detector?.features(in: image, options: [CIDetectorImageOrientation:8]);
+            let image = CIImage(cvPixelBuffer: cvPixelBuffer)
+            let features = detector?.features(in: image, options: [CIDetectorImageOrientation:8])
             for feature in features! {
-                let tmpFeature = feature as! CIQRCodeFeature;
+                let tmpFeature = feature as! CIQRCodeFeature
                 
-                let degree = angleBetweenPoints(first: tmpFeature.topRight, second: tmpFeature.topLeft);
-                print("degree",degree);
-                
-                let planeBox = SCNBox.init(width: CGFloat(0.02), height: CGFloat(0.06), length: CGFloat(0.02), chamferRadius: CGFloat(0));
-                planeBox.firstMaterial?.diffuse.contents = UIColor.blue;
-                // add texture
-                let material = SCNMaterial()
-                material.diffuse.contents = UIImage(named: "galaxy")
+                let degree = angleBetweenPoints(first: tmpFeature.topRight, second: tmpFeature.topLeft)
+                print("degree",degree)
             }
         }
     }
@@ -571,33 +532,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
     // MARK: textNode
     func textNode() -> SCNNode {
         let node = QARText.init(string: "leon", depth: 0.02)
-        node.scale = SCNVector3Make(0.02, 0.02, 0.02);
-        return node;
+        node.scale = SCNVector3Make(0.02, 0.02, 0.02)
+        return node
     }
-    
-    // MARK: delete  二维码扫描管理
-    func setupScanner() {
-        let avcaptureSession = AVCaptureSession();
-        let avDevice = AVCaptureDevice.default(for: AVMediaType.video);
-        do {
-            let deviceInput = try AVCaptureDeviceInput.init(device: avDevice!);
-            let avCaptureOutput = AVCaptureMetadataOutput.init();
-            avcaptureSession.addInput(deviceInput);
-            avcaptureSession.addOutput(avCaptureOutput);
-            avCaptureOutput.metadataObjectTypes = [.qr];
-            avCaptureOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main);
-            avcaptureSession.startRunning();
-        } catch {
-            print(error);
-        }
-    }
-    
-    func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
-        print("metadatas", metadataObjects);
-        for metaData in metadataObjects {
-            print("metaData", metaData);
-        }
-    }
-    
     
 }

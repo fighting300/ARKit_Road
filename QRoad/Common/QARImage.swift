@@ -15,7 +15,7 @@ class QARImage : SCNNode {
         let width = CGFloat((image.cgImage?.width)!)
         let height =  CGFloat((image.cgImage?.height)!)
         
-        let materil = QARMateril.init(diffuseContent: image, specularContent: nil, emissionContent: nil, shiniess: 1.0)
+        let materil = QARMateril.init(diffuseContent: image, specularContent: nil, emissionContent: nil, ambientContent: nil, shiniess: 1)
         let plane = SCNPlane(width:width, height: height)
         plane.materials = [materil]
         

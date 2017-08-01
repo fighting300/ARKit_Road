@@ -25,13 +25,11 @@ class QARText: SCNNode {
         text.firstMaterial?.shininess = 0.4
         text.firstMaterial?.diffuse.contents = UIColor.red
         text.firstMaterial?.specular.contents = UIColor.orange
-        
-        text.chamferProfile = UIBezierPath.init()
-        
+                
         self.geometry = text
         
         //        let material = SCNMaterial()
-        //        material.diffuse.contents = UIImage(named: "plane_grid.png");
+        //        material.diffuse.contents = UIImage(named: "plane_grid.png")
         //        self.geometry?.materials = [material]
         
     }

@@ -22,7 +22,7 @@ class QARVideo {
         // Create the SpriteKit video node, containing the video player
         let videoSpriteKitNode = SKVideoNode(avPlayer: videoPlayer)
         videoSpriteKitNode.yScale = -1.0
-        return videoSpriteKitNode;
+        return videoSpriteKitNode
     }
     
     required init?(coder aDecoder: NSCoder) {

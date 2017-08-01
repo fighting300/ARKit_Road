@@ -626,10 +626,10 @@ func createPlane(size: CGSize, contents: AnyObject?) -> SCNPlane {
 }
 
 func angleBetweenPoints(first: CGPoint, second: CGPoint) -> CGFloat {
-    let height = second.y - first.y;
-    let width = second.x - first.x;
-    let rads = atan(height/width);
+    let height = second.y - first.y
+    let width = second.x - first.x
+    let rads = atan(height/width)
     
-    let degree = 90 - (180.0 * rads / CGFloat.pi);
-    return degree;
+    let degree = 90 - (180.0 * rads / CGFloat.pi)
+    return degree
 }
