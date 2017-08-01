@@ -3,7 +3,7 @@
 //  QRoad
 //
 //  Created by Leon on 2017/6/25.
-//  Copyright © 2017年 qunar. All rights reserved.
+//  Copyright © 2017年 leon. All rights reserved.
 //
 
 import Foundation
@@ -16,7 +16,7 @@ extension UIImage {
         guard let ciImage = CIImage(image: self) else {
             return nil
         }
-        return UIImage(ciImage: ciImage.applyingFilter("CIColorInvert", withInputParameters: nil))
+        return UIImage.init(cgImage: ciImage.applyingFilter("CIColorInvert") as! CGImage)
     }
     
     static func composeButtonImage(from thumbImage: UIImage, alpha: CGFloat = 1.0) -> UIImage {

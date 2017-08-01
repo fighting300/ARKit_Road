@@ -3,7 +3,7 @@
 //  QRoad
 //
 //  Created by Leon on 2017/6/25.
-//  Copyright © 2017年 qunar. All rights reserved.
+//  Copyright © 2017年 leon. All rights reserved.
 //
 
 import UIKit
@@ -111,7 +111,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
         let tap = UILongPressGestureRecognizer(target: self, action: #selector(tapHandler))
         tap.minimumPressDuration = 0
         tap.cancelsTouchesInView = false
-        tap.delegate = self
         self.sceneView.addGestureRecognizer(tap)
         
     }
@@ -122,10 +121,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
         // handle touch down and touch up events separately
         if gesture.state == .began {
             // do something...
-            
         } else if gesture.state == .ended { // optional for touch up event catching
             // do something else...
-            
         }
     }
     
@@ -318,7 +315,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
             guard let screenCenter = self.screenCenter else { return }
             guard let currentFrame = self.sceneView.session.currentFrame else { return }
             
-            let mat = SCNMatrix4FromMat4(currentFrame.camera.transform);
+            let mat = SCNMatrix4(currentFrame.camera.transform);
             let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33);
             
             let (currentPosition, _ , _) = self.worldPositionFromScreenPosition(screenCenter, objectPos: self.focusSquare?.position)
@@ -337,17 +334,33 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         NSLog("touch end");
         DispatchQueue.main.async {
+            if let camera = self.sceneView.session.currentFrame?.camera  {
+                var translation = matrix_identity_float4x4;
+                translation.columns.3.z = -0.2;
+                
+                // 在当前的摄像头的位置添加一个
+                let transform = matrix_multiply(camera.transform, translation)
+                
+                // 在世界坐标系中添加的位置
+                let position = SCNVector3.positionFromTransform(transform)
+                let node = self.textNode()
+                node.position = position
+                self.sceneView.scene.rootNode.addChildNode(node)
+                
+                let lightNode = QARLight.init(type: .spot, targets: node)
+                self.sceneView.scene.rootNode.addChildNode(lightNode)
+            }
             
-            self.endNode?.removeFromParentNode();
-            guard let screenCenter = self.screenCenter else { return }
-            
-            let (worldPos, _, _) = self.worldPositionFromScreenPosition(screenCenter, objectPos: self.focusSquare?.position)
-            let previousPoint = self.startNode?.position;
-            let length = (worldPos! - previousPoint!).length();
-            
-            print("lenght", length);
-            if let worldPos = worldPos {
-                print("worldPos end", worldPos);
+//            self.endNode?.removeFromParentNode();
+//            guard let screenCenter = self.screenCenter else { return }
+//
+//            let (worldPos, _, _) = self.worldPositionFromScreenPosition(screenCenter, objectPos: self.focusSquare?.position)
+//            let previousPoint = self.startNode?.position;
+//            let length = (worldPos! - previousPoint!).length();
+//
+//            print("lenght", length);
+//            if let worldPos = worldPos {
+//                print("worldPos end", worldPos);
 //                guard let currentFrame = self.sceneView.session.currentFrame else { return }
 //                let mat = SCNMatrix4FromMat4(currentFrame.camera.transform);
 //                let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33);
@@ -360,17 +373,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
 //                self.sceneView.scene.rootNode.addChildNode(lineNode)
 //                glLineWidth(50);
                 
-                let scene = SCNScene(named: "art.scnassets/ship.scn")!
-                let shipNode = scene.rootNode.childNodes[0];
-                self.endNode = shipNode;
-                shipNode.scale = SCNVector3Make(0.02, 0.02, 0.02);
-                shipNode.position = worldPos;
-                for node in shipNode.childNodes {
-                    node.scale = SCNVector3Make(0.02, 0.02, 0.02);
-                    shipNode.position = worldPos;
-                }
-                self.sceneView.scene.rootNode.addChildNode(shipNode);
-            }
+//                let scene = SCNScene(named: "art.scnassets/ship.scn")!
+//                let shipNode = scene.rootNode.childNodes[0];
+//                self.endNode = shipNode;
+//                shipNode.scale = SCNVector3Make(0.02, 0.02, 0.02);
+//                shipNode.position = worldPos;
+//                for node in shipNode.childNodes {
+//                    node.scale = SCNVector3Make(0.02, 0.02, 0.02);
+//                    shipNode.position = worldPos;
+//                }
+//                self.sceneView.scene.rootNode.addChildNode(shipNode);
+//            }
         }
         
         
@@ -546,7 +559,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
     // 获取用户方向
     func getUserVector() -> (SCNVector3, SCNVector3) { // (direction, position)
         if let frame = self.sceneView.session.currentFrame {
-            let mat = SCNMatrix4FromMat4(frame.camera.transform) // 4x4 transform matrix describing camera in world space
+            let mat = SCNMatrix4(frame.camera.transform) // 4x4 transform matrix describing camera in world space
             let dir = SCNVector3(-1 * mat.m31, -1 * mat.m32, -1 * mat.m33) // orientation of camera in world space
             let pos = SCNVector3(mat.m41, mat.m42, mat.m43) // location of camera in world space
             
@@ -555,6 +568,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate, AR
         return (SCNVector3(0, 0, -1), SCNVector3(0, 0, -0.2))
     }
     
+    // MARK: textNode
+    func textNode() -> SCNNode {
+        let node = QARText.init(string: "leon", depth: 0.02)
+        node.scale = SCNVector3Make(0.02, 0.02, 0.02);
+        return node;
+    }
     
     // MARK: delete  二维码扫描管理
     func setupScanner() {
